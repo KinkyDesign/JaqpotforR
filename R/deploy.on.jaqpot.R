@@ -6,9 +6,12 @@
 #' @param model
 
 deploy.on.jaqpot <- function(object){
+  basep <- readline("Base path of jaqpot *etc: https://api.jaqpot.org/ : ")
   username <- readline("Username: ")
-  password <- readline("Password: ")
-  res <- postForm("http://localhost:8080/jaqpot/services/aa/login/swag", username=username, password=password, style='POST')
+  password <- getPass(msg = "PASSWORD: ", noblank = FALSE, forcemask = FALSE)
+  loginto <- paste(basep, "jaqpot/services/aa/login/", sep = "")
+  print(loginto)
+  res <- postForm(loginto, username=username, password=password, style='POST')
   authResponse <- fromJSON(res)
   checkfeatures <- array( names(coef(object)));
   if(checkfeatures[1]  %in% "(Intercept)"){
@@ -28,9 +31,8 @@ deploy.on.jaqpot <- function(object){
   tojson <- list(rawModel=model,implementedIn="R", implementedWith=libabry_in,pmmlModel=NULL,independentFeatures=independentFeaturesfm,
                  predictedFeatures=predicts, dependentFeatures=predicts, title=title, discription=discription, algorithm=algorithm)
   json <- toJSON(tojson)
-  url = "http://localhost:8080/"
   bearer = paste("Bearer", authResponse$authToken, sep=" ")
-  res = POST(url, path="jaqpot/services/model",
+  res = POST(basep, path="jaqpot/services/model",
              add_headers(Authorization=bearer),
              accept_json(),
              content_type("application/json"),
