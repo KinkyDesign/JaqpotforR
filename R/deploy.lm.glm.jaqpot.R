@@ -14,7 +14,7 @@ deploy.lm.glm.jaqpot <- function(object){
   loginto <- paste(basep, "jaqpot/services/aa/login/", sep = "")
   print(loginto)
   body <- list(username=username, password = password)
-  res <- POST(url, body = body, encode = "form")
+  res <- POST(loginto, body = body, encode = "form")
   # res <- postForm(loginto, username=username, password=password, style='POST')
   authResponse <- fromJSON(res)
   checkfeatures <- array( names(coef(object)));
