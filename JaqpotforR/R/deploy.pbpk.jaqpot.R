@@ -21,7 +21,9 @@ deploy.pbpk.jaqpot <- function(dataframe, covariate_model, odes){
   password <- getPass(msg = "PASSWORD: ", noblank = FALSE, forcemask = FALSE)
   loginto <- paste(basep, "jaqpot/services/aa/login/", sep = "")
   print(loginto)
-  res <- postForm(loginto, username=username, password=password, style='POST')
+  body <- list(username=username, password = password)
+  res <- POST(url, body = body, encode = "form")
+  # res <- postForm(loginto, username=username, password=password, style='POST')
   authResponse <- fromJSON(res)
   independentFeaturesfm <- colnames(dataframe)
 

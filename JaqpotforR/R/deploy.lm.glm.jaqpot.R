@@ -6,12 +6,16 @@
 #' @param model
 
 deploy.lm.glm.jaqpot <- function(object){
+  # basep <- 'http://localhost:8080/'
+  # basep <- 'https://api.jaqpot.org/'
   basep <- readline("Base path of jaqpot *etc: https://api.jaqpot.org/ : ")
   username <- readline("Username: ")
   password <- getPass(msg = "PASSWORD: ", noblank = FALSE, forcemask = FALSE)
   loginto <- paste(basep, "jaqpot/services/aa/login/", sep = "")
   print(loginto)
-  res <- postForm(loginto, username=username, password=password, style='POST')
+  body <- list(username=username, password = password)
+  res <- POST(url, body = body, encode = "form")
+  # res <- postForm(loginto, username=username, password=password, style='POST')
   authResponse <- fromJSON(res)
   checkfeatures <- array( names(coef(object)));
   if(checkfeatures[1]  %in% "(Intercept)"){
