@@ -14,6 +14,7 @@ deploy.lm.glm.jaqpot <- function(object){
   loginto <- paste(basep, "jaqpot/services/aa/login/", sep = "")
   print(loginto)
   body <- list(username=username, password = password)
+  httr::set_config(config(ssl_verifypeer = 0L))
   res <- POST(loginto, body = body, encode = "form")
   # res <- postForm(loginto, username=username, password=password, style='POST')
   authResponse <- fromJSON(res)
