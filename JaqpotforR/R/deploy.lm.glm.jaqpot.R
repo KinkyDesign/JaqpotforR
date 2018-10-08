@@ -5,7 +5,7 @@
 #' after some prompt questions and returns a model id
 #' @param model
 
-deploy.on.jaqpot <- function(object){
+deploy.lm.glm.jaqpot <- function(object){
   basep <- readline("Base path of jaqpot *etc: https://api.jaqpot.org/ : ")
   username <- readline("Username: ")
   password <- getPass(msg = "PASSWORD: ", noblank = FALSE, forcemask = FALSE)
@@ -28,7 +28,7 @@ deploy.on.jaqpot <- function(object){
   }
   predicts <- readline("Actual name of the predicted feature: ")
   model <- serialize(list(MODEL=object),connection=NULL)
-  tojson <- list(rawModel=model,implementedIn="R", implementedWith=libabry_in,pmmlModel=NULL,independentFeatures=independentFeaturesfm,
+  tojson <- list(rawModel=model,runtime="R", implementedWith=libabry_in,pmmlModel=NULL,independentFeatures=independentFeaturesfm,
                  predictedFeatures=predicts, dependentFeatures=predicts, title=title, discription=discription, algorithm=algorithm)
   json <- toJSON(tojson)
   bearer = paste("Bearer", authResponse$authToken, sep=" ")
