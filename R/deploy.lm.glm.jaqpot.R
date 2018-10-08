@@ -17,6 +17,7 @@ deploy.lm.glm.jaqpot <- function(object){
   httr::set_config(config(ssl_verifypeer = 0L))
   res <- POST(loginto, body = body, encode = "form")
   # res <- postForm(loginto, username=username, password=password, style='POST')
+  res <- content(res, "text")
   authResponse <- fromJSON(res)
   checkfeatures <- array( names(coef(object)));
   if(checkfeatures[1]  %in% "(Intercept)"){
