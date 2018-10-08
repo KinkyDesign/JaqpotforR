@@ -14,9 +14,9 @@
 #' @param covariate_model
 
 deploy.pbpk.jaqpot <- function(dataframe, covariate_model, odes){
-  basep <- 'http://localhost:8080/'
+  # basep <- 'http://localhost:8080/'
   # basep <- 'https://api.jaqpot.org/'
-  # basep <- readline("Base path of jaqpot *etc: https://api.jaqpot.org/ : ")
+  basep <- readline("Base path of jaqpot *etc: https://api.jaqpot.org/ : ")
   username <- readline("Username: ")
   password <- getPass(msg = "PASSWORD: ", noblank = FALSE, forcemask = FALSE)
   loginto <- paste(basep, "jaqpot/services/aa/login/", sep = "")
