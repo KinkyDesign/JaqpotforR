@@ -7,7 +7,6 @@
 #' a covariate model wich calculates physiological parameters based
 #' on a patient's characteristics
 #'
-#' and a function describing the ODE's of the system
 #'
 #' @param dataframe
 #' @param odes

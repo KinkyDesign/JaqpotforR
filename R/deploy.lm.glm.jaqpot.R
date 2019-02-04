@@ -3,22 +3,24 @@
 #
 #' deploy.on.jaqpot takes as input a trained model, it uploads it
 #' after some prompt questions and returns a model id
+#'
+#' Suports lm from base
 #' @param model
 
 deploy.lm.glm.jaqpot <- function(object){
   # basep <- 'http://localhost:8080/'
   # basep <- 'https://api.jaqpot.org/'
+  # authResponse <- login.jaqpot()
   basep <- readline("Base path of jaqpot *etc: https://api.jaqpot.org/ : ")
   username <- readline("Username: ")
   password <- getPass(msg = "PASSWORD: ", noblank = FALSE, forcemask = FALSE)
   loginto <- paste(basep, "jaqpot/services/aa/login/", sep = "")
-  print(loginto)
   body <- list(username=username, password = password)
   httr::set_config(config(ssl_verifypeer = 0L))
   res <- POST(loginto, body = body, encode = "form")
-  # res <- postForm(loginto, username=username, password=password, style='POST')
   res <- content(res, "text")
   authResponse <- fromJSON(res)
+
   checkfeatures <- array( names(coef(object)));
   if(checkfeatures[1]  %in% "(Intercept)"){
     independentFeaturesfm <- checkfeatures[!checkfeatures  %in% "(Intercept)"]
@@ -27,15 +29,13 @@ deploy.lm.glm.jaqpot <- function(object){
   }
   title <- readline("Title of the model: ")
   discription <- readline("Discription of the model:")
-  algorithm <- readline("Type or algorithm trained upon: ")
-  library_check <- readline("[1] base, [2] caret: ")
   if(library_check == 1){
     libabry_in <- "base"
   }
   predicts <- readline("Actual name of the predicted feature: ")
   model <- serialize(list(MODEL=object),connection=NULL)
-  tojson <- list(rawModel=model,runtime="R", implementedWith=libabry_in,pmmlModel=NULL,independentFeatures=independentFeaturesfm,
-                 predictedFeatures=predicts, dependentFeatures=predicts, title=title, discription=discription, algorithm=algorithm)
+  tojson <- list(rawModel=model,runtime="R-lm-glm", implementedWith="lm or a glm in r",pmmlModel=NULL,independentFeatures=independentFeaturesfm,
+                 predictedFeatures=predicts, dependentFeatures=predicts, title=title, discription=discription, algorithm="lm or a glm in r")
   json <- toJSON(tojson)
   bearer = paste("Bearer", authResponse$authToken, sep=" ")
   res = POST(basep, path="jaqpot/services/model",
