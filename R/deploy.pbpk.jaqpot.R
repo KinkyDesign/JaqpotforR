@@ -12,7 +12,7 @@
 #' @param odes
 #' @param covariate_model
 
-deploy.pbpk.jaqpot <- function(dataframe, covariate_model, odes){
+deploy.pbpk.jaqpot <- function(dataframe, covariate_model, odes, comp){
   # basep <- 'http://localhost:8080/'
   # basep <- 'https://api.jaqpot.org/'
   basep <- readline("Base path of jaqpot *etc: https://api.jaqpot.org/ : ")
@@ -33,28 +33,12 @@ deploy.pbpk.jaqpot <- function(dataframe, covariate_model, odes){
   algorithm <- 'ODESOLVER'
   libabry_in <- "deSolve"
 
-  predicts <- list()
-  i <- 1
-  prompt <- paste()
-  check <- 0
-  n_comp <- readline("Provide the number of compartments: ")
-  init_cond <- rep("0", n_comp)
-  while( check != 1){
-    check <- readline("Provide the compartment with the same order as the ODE's or press 1 to exit: ")
-    if(check ==1){
-      break;
-    }
-    predicts[[i]] <- paste(i, check, sep="_")
-    init_cond[i] <- check
-    print(paste("Compartment number ", i, " has name: ", check, sep = ""))
-    i <- i + 1
-  }
-  predicts[i+1] <- "0_time"
-  predicts <- array(as.character(unlist(predicts)))
+  predicts <- comp
+  predicts[length(predicts)+1] <- "time"
   model <- serialize(list(COVMODEL=covariate_model, ODEMODEL=odes),connection=NULL)
   tojson <- list(rawModel=model,runtime="pbpk-ode", implementedWith=libabry_in,pmmlModel=NULL,independentFeatures=independentFeaturesfm,
-                 predictedFeatures=predicts, dependentFeatures=predicts, title=title, discription=discription, algorithm=algorithm,
-                init_cond =init_cond )
+                 predictedFeatures=predicts, dependentFeatures=predicts, title=title, description=discription, algorithm=algorithm,
+                additionalInfo =list(comp = comp ))
   json <- toJSON(tojson)
   bearer = paste("Bearer", authResponse$authToken, sep=" ")
   res = POST(basep, path="jaqpot/services/model",
