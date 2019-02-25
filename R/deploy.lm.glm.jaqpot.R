@@ -1,3 +1,5 @@
+# Deploy lm glm
+#
 # This is the base function of jaqpot named 'deploy.on.jaqpot'
 # which deploys a model on 'Jaqpot'.
 #
@@ -7,19 +9,12 @@
 #' Suports lm from base
 #' @param model
 
+# source('login.jaqpot.R', local = TRUE)
+
 deploy.lm.glm.jaqpot <- function(object){
-  # basep <- 'http://localhost:8080/'
-  # basep <- 'https://api.jaqpot.org/'
-  # authResponse <- login.jaqpot()
+
   basep <- readline("Base path of jaqpot *etc: https://api.jaqpot.org/ : ")
-  username <- readline("Username: ")
-  password <- getPass(msg = "PASSWORD: ", noblank = FALSE, forcemask = FALSE)
-  loginto <- paste(basep, "jaqpot/services/aa/login/", sep = "")
-  body <- list(username=username, password = password)
-  httr::set_config(config(ssl_verifypeer = 0L))
-  res <- POST(loginto, body = body, encode = "form")
-  res <- content(res, "text")
-  authResponse <- fromJSON(res)
+  token <- login.jaqpot(basep)
 
   checkfeatures <- array( names(coef(object)));
   if(checkfeatures[1]  %in% "(Intercept)"){
@@ -35,9 +30,9 @@ deploy.lm.glm.jaqpot <- function(object){
   predicts <- readline("Actual name of the predicted feature: ")
   model <- serialize(list(MODEL=object),connection=NULL)
   tojson <- list(rawModel=model,runtime="R-lm-glm", implementedWith="lm or a glm in r",pmmlModel=NULL,independentFeatures=independentFeaturesfm,
-                 predictedFeatures=predicts, dependentFeatures=predicts, title=title, discription=discription, algorithm="lm or a glm in r")
+                 predictedFeatures=predicts, dependentFeatures=predicts, title=title, description=discription, algorithm="lm or a glm in r")
   json <- toJSON(tojson)
-  bearer = paste("Bearer", authResponse$authToken, sep=" ")
+  bearer = paste("Bearer", token, sep=" ")
   res = POST(basep, path="jaqpot/services/model",
              add_headers(Authorization=bearer),
              accept_json(),

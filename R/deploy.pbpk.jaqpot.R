@@ -50,7 +50,7 @@ deploy.pbpk.jaqpot <- function(dataframe, covariate_model, odes){
   predicts <- array(as.character(unlist(predicts)))
   model <- serialize(list(COVMODEL=covariate_model, ODEMODEL=odes),connection=NULL)
   tojson <- list(rawModel=model,runtime="pbpk-ode", implementedWith=libabry_in,pmmlModel=NULL,independentFeatures=independentFeaturesfm,
-                 predictedFeatures=predicts, dependentFeatures=predicts, title=title, discription=discription, algorithm=algorithm)
+                 predictedFeatures=predicts, dependentFeatures=predicts, title=title, description=discription, algorithm=algorithm)
   json <- toJSON(tojson)
   bearer = paste("Bearer", authResponse$authToken, sep=" ")
   res = POST(basep, path="jaqpot/services/model",
