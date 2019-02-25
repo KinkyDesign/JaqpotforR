@@ -37,12 +37,15 @@ deploy.pbpk.jaqpot <- function(dataframe, covariate_model, odes){
   i <- 1
   prompt <- paste()
   check <- 0
+  n_comp <- readline("Provide the number of compartments: ")
+  init_cond <- rep("0", n_comp)
   while( check != 1){
     check <- readline("Provide the compartment with the same order as the ODE's or press 1 to exit: ")
     if(check ==1){
       break;
     }
     predicts[[i]] <- paste(i, check, sep="_")
+    init_cond[i] <- check
     print(paste("Compartment number ", i, " has name: ", check, sep = ""))
     i <- i + 1
   }
@@ -50,7 +53,8 @@ deploy.pbpk.jaqpot <- function(dataframe, covariate_model, odes){
   predicts <- array(as.character(unlist(predicts)))
   model <- serialize(list(COVMODEL=covariate_model, ODEMODEL=odes),connection=NULL)
   tojson <- list(rawModel=model,runtime="pbpk-ode", implementedWith=libabry_in,pmmlModel=NULL,independentFeatures=independentFeaturesfm,
-                 predictedFeatures=predicts, dependentFeatures=predicts, title=title, discription=discription, algorithm=algorithm)
+                 predictedFeatures=predicts, dependentFeatures=predicts, title=title, discription=discription, algorithm=algorithm,
+                init_cond =init_cond )
   json <- toJSON(tojson)
   bearer = paste("Bearer", authResponse$authToken, sep=" ")
   res = POST(basep, path="jaqpot/services/model",
